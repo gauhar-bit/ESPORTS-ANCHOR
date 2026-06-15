@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esports Anchor - Elite Player Station</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #05070f;
+            --card-bg: #0c111d;
+            --header-bg: #080c16;
+            --primary: #00ffff;
+            --accent: #ffaa00;
+            --text-main: #f1f5f9;
+            --text-sub: #64748b;
+            --border-color: #1e293b;
+            --neon-glow: 0 0 12px rgba(0, 255, 255, 0.25);
+        }
+        [data-theme="light"] {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --header-bg: #f1f5f9;
+            --primary: #0284c7;
+            --accent: #ea580c;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: #e2e8f0;
+            --neon-glow: 0 0 8px rgba(2, 132, 199, 0.15);
+        }
+        
+        body { background: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding-top: 75px; transition: background 0.3s, color 0.3s; -webkit-tap-highlight-color: transparent; }
+        
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: var(--header-bg); display: flex; justify-content: space-between;
+            align-items: center; padding: 0 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-bottom: 2px solid var(--primary); z-index: 1000;
+        }
+        .brand-title { font-size: 18px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .brand-title span { color: var(--primary); text-shadow: var(--neon-glow); }
+        
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .menu-btn { font-size: 20px; color: var(--primary); cursor: pointer; background: none; border: none; }
+        .theme-toggle { background: none; border: none; color: var(--primary); font-size: 18px; cursor: pointer; }
+        
+        .ticker-wrap { background: #ef4444; color: white; padding: 7px; font-size: 11px; font-weight: bold; text-align: center; display: none; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .content { max-width: 650px; margin: 0 auto; padding: 12px; box-sizing: border-box; }
+        .section-heading { font-size: 13px; font-weight: bold; color: var(--accent); margin-bottom: 15px; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+        
+        .tab-btn-container { display: flex; gap: 8px; margin-bottom: 18px; }
+        .tab-btn { flex: 1; padding: 10px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-sub); border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: 0.2s; }
+        .tab-btn.active { border-color: var(--primary); color: var(--primary); box-shadow: var(--neon-glow); }
+
+        .match-card { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border-color); padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
+        .tour-name { font-size: 13px; font-weight: 800; text-transform: uppercase; }
+        .game-badge { background: var(--primary); color: #000; padding: 3px 7px; font-size: 9px; font-weight: 900; border-radius: 4px; text-transform: uppercase; }
+        
+        .score-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+        .score-table th { background: rgba(0,0,0,0.15); color: var(--primary); padding: 10px 8px; font-weight: bold; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+        .score-table td { padding: 10px 8px; border-bottom: 1px solid var(--border-color); }
+        
+        .roster-dropdown-details { background: rgba(0,0,0,0.2); padding: 8px; font-size: 11px; color: var(--text-sub); border-bottom: 1px solid var(--border-color); }
+        .roster-grid-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+        .p-unit { padding: 4px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+        .p-unit.alive { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .p-unit.elim { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        .side-nav { position: fixed; top: 0; right: -280px; width: 250px; height: 100%; background: var(--header-bg); box-shadow: -5px 0 25px rgba(0,0,0,0.5); z-index: 1001; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; box-sizing: border-box; }
+        .side-nav.active { right: 0; }
+        .close-btn { font-size: 22px; color: #ef4444; float: right; cursor: pointer; background: none; border: none; }
+        .nav-links { list-style: none; padding: 0; margin-top: 40px; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; }
+        .nav-links a:hover { background: rgba(0, 255, 255, 0.05); color: var(--primary); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; }
+        .overlay.active { display: block; }
+
+        .custom-form { display: flex; flex-direction: column; gap: 12px; background: var(--card-bg); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 15px; }
+        .custom-form input, .custom-form select { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 8px; font-size: 12px; outline: none; }
+        .submit-btn { background: var(--primary); color: black; padding: 11px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; }
+
+        .chat-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; height: 380px; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .msg { background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 10px; max-width: 85%; }
+        .msg .user { font-size: 10px; color: var(--primary); font-weight: bold; }
+        .msg .text { font-size: 12px; margin-top: 2px; }
+        .chat-input-area { display: flex; padding: 8px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-color); gap: 8px; }
+        .chat-input-area input { flex: 1; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 8px; outline: none; }
+
+        .fav-badge { background: rgba(255, 170, 0, 0.15); color: var(--accent); padding: 2px 5px; border-radius: 4px; font-size: 9px; margin-left: 4px; font-weight: bold; border: 1px solid rgba(255,170,0,0.3); }
+        .squad-uid-badge { background: rgba(0, 255, 255, 0.1); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: bold; }
+        .req-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 8px; border-radius: 6px; margin-bottom: 5px; font-size: 12px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="brand-title"><i class="fa-solid fa-gamepad" style="color:var(--primary);"></i> ANCHOR <span>ARENA</span></div>
+        <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleAppTheme()"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+            <div id="userProfileArea" style="font-size:11px; font-weight:bold; color:var(--primary); max-width:70px; overflow:hidden; text-overflow:ellipsis;"></div>
+            <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </header>
+
+    <div class="ticker-wrap" id="broadcastTicker"></div>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <nav class="side-nav" id="sideNav">
+        <button class="close-btn" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
+        <ul class="nav-links" style="padding:0; list-style:none;">
+            <li><a href="#" onclick="switchPortalView('live-view')"><i class="fa-solid fa-satellite-dish"></i> Live Tournament Hub</a></li>
+            <li><a href="#" onclick="switchPortalView('squad-view')"><i class="fa-solid fa-users-viewfinder"></i> Team & Squad Lobby</a></li>
+            <li><a href="#" onclick="switchPortalView('chat-view')"><i class="fa-solid fa-comments"></i> Live Drop Chat</a></li>
+            <li><a href="#" onclick="switchPortalView('auth-view')" id="authMenuLink"><i class="fa-solid fa-user-lock"></i> Player Login</a></li>
+            <li><a id="navWhatsApp" href="#" target="_blank"><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> WhatsApp Hub</a></li>
+            <li><a id="navTelegram" href="#" target="_blank"><i class="fa-brands fa-telegram" style="color:#24a1de;"></i> Telegram Channel</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        
+        <div id="live-view" class="page-view active">
+            <div class="tab-btn-container">
+                <button class="tab-btn active" id="btnActiveTab" onclick="toggleLeaderboardTab('active')">Live Roster Log</button>
+                <button class="tab-btn" id="btnOverallTab" onclick="toggleLeaderboardTab('overall')">Overall Standings</button>
+                <button class="tab-btn" id="btnHistoryTab" onclick="toggleLeaderboardTab('history')">Match History Slides</button>
+            </div>
+            
+            <div id="historyDropdownBlock" style="display:none; margin-bottom:15px;" class="custom-form">
+                <label style="font-size:10px; font-weight:bold; color:var(--text-sub);">Select Completed Match Slide Ledger:</label>
+                <select id="historyMatchSelect" onchange="loadSpecificArchivedSlide(this.value)">
+                    <option value="">-- Choose Historical Slide Sheet --</option>
+                </select>
+            </div>
+
+            <div class="section-heading"><i class="fa-solid fa-circle" style="color:#ff3344; font-size:9px; animation: blink 1.2s infinite;"></i> Arena Points Display Standings</div>
+            <div id="tournamentsList"></div>
+        </div>
+
+        <div id="squad-view" class="page-view">
+            <div id="squadLoggedOutMsg" class="custom-form" style="text-align:center; color:var(--text-sub);">
+                <p>Please log in using verified profile credentials to setup custom squads or dispatch join requests.</p>
+                <button class="submit-btn" onclick="switchPortalView('auth-view')">Go to Login</button>
+            </div>
+
+            <div id="squadLoggedInBlock" style="display:none;">
+                <div class="section-heading"><i class="fa-solid fa-magnifying-glass"></i> Dispatch Joining Request to Clan via UID</div>
+                <div class="custom-form" style="flex-direction:row;">
+                    <input type="text" id="searchSquadUid" placeholder="Enter Team UID Code (e.g. SQ-1234)" style="flex:1;">
+                    <button class="submit-btn" onclick="dispatchClanJoinRequest()">Request Access</button>
+                </div>
+
+                <div id="createSquadConsole">
+                    <div class="section-heading"><i class="fa-solid fa-shield-halved"></i> Create Public Roster Lineup</div>
+                    <div class="custom-form">
+                        <input type="text" id="sqName" placeholder="Squad Identity Label Name (e.g. Team Soul)">
+                        <input type="text" id="sqP2" placeholder="Player 2 Alternative Handle">
+                        <input type="text" id="sqP3" placeholder="Player 3 Alternative Handle">
+                        <input type="text" id="sqP4" placeholder="Player 4 Alternative Handle">
+                        <button class="submit-btn" onclick="publishNewSquadLineup()">Register Roster Group</button>
+                    </div>
+                </div>
+
+                <div id="leaderSquadConsole" style="display:none;" class="custom-form">
+                    <h3 style="margin:0; font-size:14px; color:var(--primary);">My Clan Panel: <span id="myClanTitle"></span></h3>
+                    <p style="font-size:11px; color:var(--text-sub); margin:3px 0;">Unique Search UID Token: <span id="myClanUid" class="squad-uid-badge"></span></p>
+                    <div style="font-size:11px; margin-top:5px; color:var(--text-main);" id="myClanLineupText"></div>
+                    
+                    <div style="margin-top:14px; border-top:1px solid var(--border-color); padding-top:10px;">
+                        <label style="font-size:10px; font-weight:bold; color:var(--accent);">Incoming Applications Ledger (Max Limit 5):</label>
+                        <div id="incomingReqList" style="margin-top:5px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:20px;">
+                <div class="section-heading">Verified Community Teams Directory</div>
+                <div id="publicSquadsContainer"></div>
+            </div>
+        </div>
+
+        <div id="chat-view" class="page-view">
+            <div class="section-heading"><i class="fa-solid fa-headset"></i> Global Battle Lobby Chat</div>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatBox"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatMsgInput" placeholder="Type message updates here...">
+                    <button class="chat-btn" onclick="sendLobbyChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="auth-view" class="page-view">
+            <div class="section-heading"><i class="fa-solid fa-id-card"></i> Player Verification Portal</div>
+            <div class="custom-form" id="authFormBlock">
+                <input type="email" id="authEmail" placeholder="Registered Profile Email Address">
+                <input type="password" id="authPass" placeholder="Secure Verification Password">
+                <div style="display:flex; gap:10px;">
+                    <button class="submit-btn" style="flex:1;" onclick="processAuthAction('login')">Sign In</button>
+                    <button class="submit-btn" style="flex:1; background:#1e293b; color:white;" onclick="processAuthAction('register')">Register Account</button>
+                </div>
+            </div>
+            <div id="authWelcomeBlock" style="display:none;" class="custom-form">
+                <h3 id="welcomeUserText" style="margin:0; font-size:15px;">Session Verified!</h3>
+                <label>Set Favorite Tracking Clan Target:</label>
+                <input type="text" id="userFavTeamInput" placeholder="Type Squad Name Exactly to highlight it">
+                <button class="submit-btn" onclick="commitFavPreference()">Save Highlight Rule</button>
+                <button class="submit-btn" style="background:#ef4444; color:white; margin-top:10px;" onclick="terminateUserSession()">Sign Out Account</button>
+            </div>
+        </div>
+
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAZ2-N8LftZ9D7FmmQMUq0drOt3YOEqtZg",
+        authDomain: "esports-anchor.firebaseapp.com",
+        databaseURL: "https://esports-anchor-default-rtdb.firebaseio.com",
+        projectId: "esports-anchor",
+        storageBucket: "esports-anchor.firebasestorage.app",
+        messagingSenderId: "369229923615",
+        appId: "1:369229923615:web:359e43a502004bd7379c2a"
+    };
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    // Variables Declared Before Listener Calls
+    let currentUser = null;
+    let userFavTeam = "";
+    let activeLeaderboardTabState = 'active';
+
+    // Theme Management Node
+    if(localStorage.getItem('savedTheme') === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.getElementById('themeIcon').className = "fa-solid fa-sun";
+    }
+    function toggleAppTheme() {
+        let current = document.documentElement.getAttribute('data-theme');
+        if(current === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.getElementById('themeIcon').className = "fa-solid fa-sun";
+            localStorage.setItem('savedTheme', 'light');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = "fa-solid fa-moon";
+            localStorage.setItem('savedTheme', 'dark');
+        }
+    }
+
+    // Dynamic Auth State Engine
+    auth.onAuthStateChanged(user => {
+        if(user) {
+            currentUser = user;
+            document.getElementById('userProfileArea').innerText = "👤 " + user.email.split('@')[0].toUpperCase();
+            document.getElementById('authFormBlock').style.display = 'none';
+            document.getElementById('authWelcomeBlock').style.display = 'flex';
+            document.getElementById('authMenuLink').innerHTML = '<i class="fa-solid fa-user-gear"></i> Profile Panel';
+            document.getElementById('squadLoggedOutMsg').style.display = 'none';
+            document.getElementById('squadLoggedInBlock').style.display = 'block';
+
+            database.ref(`users/${user.uid}/favTeam`).once('value', s => {
+                if(s.exists()) { userFavTeam = s.val(); document.getElementById('userFavTeamInput').value = userFavTeam; }
+            });
+            syncSquadLeaderOperationsPanel();
+        } else {
+            currentUser = null;
+            document.getElementById('userProfileArea').innerText = "";
+            document.getElementById('authFormBlock').style.display = 'flex';
+            document.getElementById('authWelcomeBlock').style.display = 'none';
+            document.getElementById('authMenuLink').innerHTML = '<i class="fa-solid fa-user-lock"></i> Player Login';
+            document.getElementById('squadLoggedOutMsg').style.display = 'block';
+            document.getElementById('squadLoggedInBlock').style.display = 'none';
+            userFavTeam = "";
+        }
+    });
+
+    function processAuthAction(mode) {
+        const email = document.getElementById('authEmail').value.trim();
+        const pass = document.getElementById('authPass').value.trim();
+        if(!email || !pass) return alert('Fill authorization entry parameters.');
+        if(mode === 'login') auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+        else auth.createUserWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+    }
+    function terminateUserSession() { auth.signOut().then(() => window.location.reload()); }
+    
+    function commitFavPreference() {
+        if(currentUser) {
+            const teamVal = document.getElementById('userFavTeamInput').value.trim();
+            database.ref(`users/${currentUser.uid}/favTeam`).set(teamVal).then(() => {
+                userFavTeam = teamVal;
+                alert('Highlight display preference saved!');
+                if(activeLeaderboardTabState === 'active') attachActiveLeaderboardListener();
+                else if(activeLeaderboardTabState === 'overall') attachOverallStandingsListener();
+            });
+        }
+    }
+
+    function toggleMenu() {
+        document.getElementById('sideNav').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+    function switchPortalView(targetId) {
+        toggleMenu();
+        document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+    }
+
+    // App Settings Fetch
+    database.ref('app_settings').on('value', s => {
+        if(!s.exists()) return;
+        document.getElementById('navWhatsApp').href = s.val().whatsappUrl || "#";
+        document.getElementById('navTelegram').href = s.val().telegramUrl || "#";
+    });
+
+    database.ref('announcements/tournament_1').on('value', s => {
+        const el = document.getElementById('broadcastTicker');
+        if(s.exists() && s.val().text) { el.innerText = "📣 BULLETIN: " + s.val().text; el.style.display = 'block'; }
+        else el.style.display = 'none';
+    });
+
+    // LEADERBOARD SWITCH CHANNELS
+    function toggleLeaderboardTab(targetMode) {
+        activeLeaderboardTabState = targetMode;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('historyDropdownBlock').style.display = 'none';
+        
+        if(targetMode === 'active') {
+            document.getElementById('btnActiveTab').classList.add('active');
+            attachActiveLeaderboardListener();
+        } else if(targetMode === 'overall') {
+            document.getElementById('btnOverallTab').classList.add('active');
+            attachOverallStandingsListener();
+        } else if(targetMode === 'history') {
+            document.getElementById('btnHistoryTab').classList.add('active');
+            document.getElementById('historyDropdownBlock').style.display = 'block';
+            loadHistorySlideIndices();
+        }
+    }
+
+    // VIEW NODE 1: ACTIVE LIVE TOURNAMENT MATRICES
+    function attachActiveLeaderboardListener() {
+        database.ref('tournament_1/liveMatchData').off();
+        database.ref('tournament_1/liveMatchData').on('value', snapshot => {
+            const container = document.getElementById('tournamentsList');
+            container.innerHTML = '';
+            
+            if(!snapshot.exists()) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:12px;">Waiting for active match data feed stream initialization...</p>';
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const match = child.val();
+                if(!match.teams) return;
+
+                let sorted = Object.values(match.teams).sort((a,b) => b.totalPoints - a.totalPoints);
+                let matchBlocksHTML = '';
+
+                sorted.forEach((t, idx) => {
+                    let rankMedal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1;
+                    let matchRowHighlight = (userFavTeam && t.name.toLowerCase() === userFavTeam.toLowerCase()) ? 'background:rgba(0,255,255,0.06);' : '';
+                    let favBadgeHTML = (userFavTeam && t.name.toLowerCase() === userFavTeam.toLowerCase()) ? '<span class="fav-badge">TRACKING</span>' : '';
+
+                    let rosterUnitsHTML = '';
+                    if(t.players) {
+                        Object.values(t.players).forEach(p => {
+                            let cleanStatusClass = (p.status === "Alive") ? "alive" : "elim";
+                            rosterUnitsHTML += `<div class="p-unit ${cleanStatusClass}">${p.name} [${p.status.toUpperCase()}]</div>`;
+                        });
+                    }
+
+                    matchBlocksHTML += `
+                        <tr style="${matchRowHighlight}">
+                            <td style="text-align:center; font-weight:bold;">${rankMedal}</td>
+                            <td style="font-weight:700;">${t.name} ${favBadgeHTML}</td>
+                            <td style="text-align:center; font-weight:600;">${t.kills}</td>
+                            <td style="text-align:center;">${t.placementPoints}</td>
+                            <td style="text-align:center; color:var(--primary); font-weight:900;">${t.totalPoints}</td>
+                        </tr>
+                        <tr style="${matchRowHighlight}">
+                            <td colspan="5" style="padding:4px 8px;">
+                                <div class="roster-dropdown-details">
+                                    <div class="roster-grid-row">${rosterUnitsHTML || 'No direct roster links mapped.'}</div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="match-card">
+                        <div class="card-header">
+                            <div class="tour-name">${match.tournamentName} [${match.matchLabel}]</div>
+                            <div class="game-badge">${match.gameName}</div>
+                        </div>
+                        <div style="font-size:11px; color:var(--text-sub); margin-bottom:10px;">
+                            <i class="fa-solid fa-map"></i> Arena Map: <strong>${match.mapName}</strong> | Lifecycle Status: <span style="color:var(--primary); font-weight:bold;">${match.status}</span>
+                        </div>
+                        <table class="score-table">
+                            <thead>
+                                <tr><th style="width:10%; text-align:center;">Rank</th><th>Squad Group Label</th><th style="text-align:center;">Kills</th><th style="text-align:center;">Place Pts</th><th style="text-align:center;">Total</th></tr>
+                            </thead>
+                            <tbody>${matchBlocksHTML}</tbody>
+                        </table>
+                    </div>
+                `;
+            });
+        });
+    }
+
+    // VIEW NODE 2: OVERALL CONTINUOUS ACCUMULATION LEDGER RUNNER
+    function attachOverallStandingsListener() {
+        database.ref('tournament_1/liveMatchData').off();
+        database.ref('tournament_1/overall').on('value', snapshot => {
+            const container = document.getElementById('tournamentsList');
+            container.innerHTML = '';
+
+            if(!snapshot.exists() || !snapshot.val().teams) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:12px;">No overall points compiled yet.</p>';
+                return;
+            }
+
+            const data = snapshot.val();
+            let sorted = Object.values(data.teams).sort((a,b) => b.totalPoints - a.totalPoints);
+            let rowHTML = '';
+
+            sorted.forEach((t, i) => {
+                let rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1;
+                let highlightStyle = (userFavTeam && t.name.toLowerCase() === userFavTeam.toLowerCase()) ? 'background:rgba(0,255,255,0.06);' : '';
+                let favBadge = (userFavTeam && t.name.toLowerCase() === userFavTeam.toLowerCase()) ? '<span class="fav-badge">TRACKING</span>' : '';
+
+                rowHTML += `
+                    <tr style="${highlightStyle}">
+                        <td style="text-align:center; font-weight:bold;">${rank}</td>
+                        <td style="font-weight:700;">${t.name} ${favBadge}</td>
+                        <td style="text-align:center;">${t.kills}</td>
+                        <td style="text-align:center;">${t.placementPoints}</td>
+                        <td style="text-align:center; color:var(--primary); font-weight:bold;">${t.totalPoints}</td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="match-card" style="border-color: var(--primary);">
+                    <div class="card-header">
+                        <div class="tour-name">${data.tournamentName} - Cumulative Total Standings</div>
+                        <div class="game-badge">OVERALL</div>
+                    </div>
+                    <table class="score-table">
+                        <thead>
+                            <tr><th style="width:10%; text-align:center;">Rank</th><th>Squad Group Label</th><th style="text-align:center;">Total Kills</th><th style="text-align:center;">Total Placement</th><th style="text-align:center;">Grand Total</th></tr>
+                        </thead>
+                        <tbody>${rowHTML}</tbody>
+                    </table>
+                </div>
+            `;
+        });
+    }
+
+    // VIEW NODE 3: CRICKET STYLE DAY END HISTORICAL ARCHIVE SLIDES
+    function loadHistorySlideIndices() {
+        database.ref('tournament_1/history').once('value', s => {
+            const selectEl = document.getElementById('historyMatchSelect');
+            selectEl.innerHTML = '<option value="">-- Choose Historical Slide Sheet --</option>';
+            if(!s.exists()) return;
+            s.forEach(child => {
+                selectEl.innerHTML += `<option value="${child.key}">${child.val().matchLabel} (${child.val().gameName})</option>`;
+            });
+        });
+    }
+
+    function loadSpecificArchivedSlide(key) {
+        if(!key) return;
+        database.ref(`tournament_1/history/${key}`).once('value', s => {
+            const container = document.getElementById('tournamentsList');
+            container.innerHTML = '';
+            if(!s.exists()) return;
+
+            const match = s.val();
+            let sorted = Object.values(match.teams).sort((a,b) => b.totalPoints - a.totalPoints);
+            let rowHTML = '';
+
+            sorted.forEach((t, i) => {
+                let rank = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1;
+                
+                let rosterUnitsHTML = '';
+                if(t.players) {
+                    Object.values(t.players).forEach(p => {
+                        let cleanStatusClass = (p.status === "Alive") ? "alive" : "elim";
+                        rosterUnitsHTML += `<div class="p-unit ${cleanStatusClass}">${p.name} [${p.status.toUpperCase()}]</div>`;
+                    });
+                }
+
+                rowHTML += `
+                    <tr>
+                        <td style="text-align:center; font-weight:bold;">${rank}</td>
+                        <td style="font-weight:700;">${t.name}</td>
+                        <td style="text-align:center;">${t.kills}</td>
+                        <td style="text-align:center;">${t.placementPoints}</td>
+                        <td style="text-align:center; color:var(--primary); font-weight:bold;">${t.totalPoints}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding:4px 8px;">
+                            <div class="roster-dropdown-details">
+                                <div class="roster-grid-row">${rosterUnitsHTML || 'No roster map array saved in slide ledger.'}</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="match-card" style="border-color: var(--accent);">
+                    <div class="card-header">
+                        <div class="tour-name">${match.tournamentName} - [${match.matchLabel}] Archive</div>
+                        <div class="game-badge" style="background:var(--accent); color:#000;">${match.gameName}</div>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-sub); margin-bottom:10px;"><i class="fa-solid fa-clock-rotate-left"></i> Historical Closed Scorecard Slide Ledger Sheet</div>
+                    <table class="score-table">
+                        <thead>
+                            <tr><th style="width:10%; text-align:center;">Rank</th><th>Squad Group Label</th><th style="text-align:center;">Kills</th><th style="text-align:center;">Place Pts</th><th style="text-align:center;">Total</th></tr>
+                        </thead>
+                        <tbody>${rowHTML}</tbody>
+                    </table>
+                </div>
+            `;
+        });
+    }
+
+    // SQUAD REALTIME INTERACTION ROSTER PIPELINE
+    function publishNewSquadLineup() {
+        if(!currentUser) return alert("Verify authentication context profile mapping link.");
+        const name = document.getElementById('sqName').value.trim();
+        const p2 = document.getElementById('sqP2').value.trim() || 'N/A';
+        const p3 = document.getElementById('sqP3').value.trim() || 'N/A';
+        const p4 = document.getElementById('sqP4').value.trim() || 'N/A';
+
+        if(!name) return alert('Squad Label target input cannot be blank!');
+        const generatedUid = "SQ-" + Math.floor(1000 + Math.random() * 9000);
+
+        const payload = {
+            uid: generatedUid,
+            name: name,
+            leaderUid: currentUser.uid,
+            leaderEmail: currentUser.email,
+            p2, p3, p4
+        };
+
+        database.ref(`squads/${currentUser.uid}`).set(payload).then(() => {
+            database.ref(`users/${currentUser.uid}/ownedSquadId`).set(generatedUid);
+            alert(`Lineup cataloged dynamically. Unique Squad UID: ${generatedUid}`);
+        });
+    }
+
+    function syncSquadLeaderOperationsPanel() {
+        database.ref(`squads/${currentUser.uid}`).on('value', s => {
+            if(s.exists()) {
+                document.getElementById('createSquadConsole').style.display = 'none';
+                document.getElementById('leaderSquadConsole').style.display = 'block';
+                const squad = s.val();
+                document.getElementById('myClanTitle').innerText = squad.name;
+                document.getElementById('myClanUid').innerText = squad.uid;
+                document.getElementById('myClanLineupText').innerHTML = `<strong>Active Group Array:</strong> ${squad.leaderEmail.split('@')[0]} (IGL), ${squad.p2}, ${squad.p3}, ${squad.p4}`;
+
+                const listBlock = document.getElementById('incomingReqList');
+                listBlock.innerHTML = '';
+                
+                if(squad.joinRequests) {
+                    Object.keys(squad.joinRequests).forEach(key => {
+                        const r = squad.joinRequests[key];
+                        listBlock.innerHTML += `
+                            <div class="req-item">
+                                <span><strong>${r.playerName}</strong> (${r.playerEmail})</span>
+                                <div>
+                                    <button class="submit-btn" style="padding:4px 10px; background:#10b981;" onclick="respondToJoinRequest('${key}','accept','${r.playerUid}')">✓</button>
+                                    <button class="submit-btn" style="padding:4px 10px; background:#ef4444;" onclick="respondToJoinRequest('${key}','reject','${r.playerUid}')">✗</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    listBlock.innerHTML = '<p style="font-size:11px; color:var(--text-sub); margin:0;">No open recruitment applications logs pending.</p>';
+                }
+            } else {
+                document.getElementById('createSquadConsole').style.display = 'block';
+                document.getElementById('leaderSquadConsole').style.display = 'none';
+            }
+        });
+    }
+
+    function dispatchClanJoinRequest() {
+        if(!currentUser) return alert('Verification login token session tracking lost.');
+        const targetToken = document.getElementById('searchSquadUid').value.trim().toUpperCase();
+        if(!targetToken) return alert('Input valid alphanumeric group target UID tag.');
+
+        database.ref(`users/${currentUser.uid}/pendingRequest`).once('value', s => {
+            if(s.exists() && s.val() !== "") {
+                alert("STRICT SYSTEM BOUNDS: You possess 1 dispatch registration pipeline lock pending already.");
+                return;
+            }
+
+            database.ref('squads').once('value', snap => {
+                let foundMatch = false;
+                let targetLeaderKey = null;
+                let totalCurrentRequests = 0;
+
+                snap.forEach(c => {
+                    if(c.val().uid === targetToken) {
+                        foundMatch = true;
+                        targetLeaderKey = c.key;
+                        totalCurrentRequests = Object.keys(c.val().joinRequests || {}).length;
+                    }
+                });
+
+                if(!foundMatch) return alert('No squads matrix match located under target UID token.');
+                if(targetLeaderKey === currentUser.uid) return alert('Operation blocked. Target matches owner link context.');
+                if(totalCurrentRequests >= 5) return alert('MAX QUEUE LIMIT: Target Leader application processing database full.');
+
+                const requestBody = {
+                    playerUid: currentUser.uid,
+                    playerName: currentUser.email.split('@')[0].toUpperCase(),
+                    playerEmail: currentUser.email
+                };
+
+                const newRef = database.ref(`squads/${targetLeaderKey}/joinRequests`).push();
+                newRef.set(requestBody).then(() => {
+                    database.ref(`users/${currentUser.uid}/pendingRequest`).set({
+                        leaderUid: targetLeaderKey, reqKey: newRef.key
+                    });
+                    alert('Recruitment request dispatched to group leader logs successfully!');
+                });
+            });
+        });
+    }
+
+    function respondToJoinRequest(key, systemAction, playerUid) {
+        if(systemAction === 'accept') { alert('Player entry authorized into group catalog alignment!'); }
+        else { alert('Application cleared.'); }
+        database.ref(`squads/${currentUser.uid}/joinRequests/${key}`).remove();
+        database.ref(`users/${playerUid}/pendingRequest`).remove();
+    }
+
+    // Community Squad Directory Listing Monitor
+    database.ref('squads').on('value', s => {
+        const container = document.getElementById('publicSquadsContainer'); container.innerHTML = '';
+        if(!s.exists()) { container.innerHTML = '<p style="font-size:11px; color:var(--text-sub);">No groups registered inside index arrays.</p>'; return; }
+        s.forEach(child => {
+            const v = child.val();
+            container.innerHTML += `
+                <div class="match-card" style="padding:12px; margin-bottom:10px; border-left:3px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>🛡️ Team: ${v.name}</strong><span class="squad-uid-badge">${v.uid}</span>
+                    </div>
+                    <span style="font-size:11px; color:var(--text-sub);">IGL Leader: ${v.leaderEmail.split('@')[0]} | Lineup: ${v.p2}, ${v.p3}, ${v.p4}</span>
+                </div>
+            `;
+        });
+    });
+
+    // Chat room messaging logic
+    function sendLobbyChatMessage() {
+        const input = document.getElementById('chatMsgInput');
+        if(!input.value.trim()) return;
+        let username = currentUser ? currentUser.email.split('@')[0] : "Guest_Operator";
+        database.ref('lobby_chat').push().set({ user: username, text: input.value.trim() });
+        input.value = '';
+    }
+    database.ref('lobby_chat').limitToLast(30).on('value', s => {
+        const box = document.getElementById('chatBox'); box.innerHTML = '';
+        s.forEach(c => {
+            const m = c.val();
+            box.innerHTML += `<div class="msg"><div class="user">⚡ ${m.user}</div><div class="text">${m.text}</div></div>`;
+        });
+        box.scrollTop = box.scrollHeight;
+    });
+
+    // RUN THE INITIALIZER AT THE VERY END
+    window.onload = () => {
+        attachActiveLeaderboardListener();
+    };
+</script>
+</body>
+</html>
