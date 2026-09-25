@@ -1,6 +1,6 @@
 // ==========================================
 // 1. FIREBASE INITIALIZATION
-// =============/=============================
+// ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyAZ2-N8LftZ9D7FmmQMUq0drOt3YOEQtZg",
   authDomain: "esports-anchor.firebaseapp.com",
@@ -46,11 +46,9 @@ function toggleAppTheme() {
 // 4. UI NAVIGATION & TOGGLES
 // ==========================================
 function switchPortalView(targetId, btnElement) {
-    // Hide all views, show targeted view
     document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
     document.getElementById(targetId).classList.add('active');
     
-    // Update active state on top nav bar (if clicked from nav)
     if(btnElement) {
         document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
@@ -101,15 +99,11 @@ function toggleLeaderboardTab(targetMode) {
 // ==========================================
 auth.onAuthStateChanged(user => {
     if(user) {
-                   currentUser = user;
-            
-            
-            let shortName = user.displayName ? user.displayName : (user.email ? user.email.split('@')[0] : user.uid);
-            if (shortName.length > 10) { shortName = shortName.substring(0, 10) + "..."; }
-            document.getElementById('userProfileArea').innerText = "👤 " + shortName.toUpperCase();
-            // --------------------------------------------
- 
-      ('userProfileArea').innerText = "👤 " + user.email.split('@')[0].toUpperCase();
+        currentUser = user;
+        let shortName = user.displayName ? user.displayName : (user.email ? user.email.split('@')[0] : user.uid);
+        if (shortName.length > 10) { shortName = shortName.substring(0, 10) + "..."; }
+        document.getElementById('userProfileArea').innerText = "👤 " + shortName.toUpperCase();
+        
         document.getElementById('authFormBlock').style.display = 'none';
         document.getElementById('authWelcomeBlock').style.display = 'flex';
         document.getElementById('authMenuLink').innerHTML = '<i class="fa-solid fa-user-gear"></i> Profile';
@@ -201,7 +195,6 @@ function attachDataListeners() {
         renderDataViews();
     });
     
-    // App Settings (Broadcast & Links)
     database.ref('app_settings').on('value', s => {
         if(!s.exists()) return;
         let waLink = document.getElementById('navWhatsApp');
@@ -225,7 +218,6 @@ function renderDataViews() {
     renderInstantOverall();
 }
 
-// Horizontal Match Slider Rendering
 function renderSwipeableMatches() {
     const container = document.getElementById('tournamentsList');
     container.innerHTML = '';
@@ -302,8 +294,17 @@ function renderSwipeableMatches() {
             `;
         });
 
-        let statusBadge = match.isLive ? `<i class="fa-solid fa-circle live-dot"></i> LIVE` : `<i class="fa-solid fa-clock-rotate-left"></i> ENDED`;
-        let borderStyle = match.isLive ? 'border-color: #ef4444; box-shadow: 0 10px 30px rgba(239,68,68,0.15);' : '';
+        // FIXED LIVE/UPCOMING BADGE ISSUE
+        let statusBadge = '';
+        if (match.status === 'UPCOMING') {
+            statusBadge = `<i class="fa-solid fa-clock" style="color:var(--accent);"></i> <span style="color:var(--accent);">UPCOMING</span>`;
+        } else if (match.status === 'COMPLETED') {
+            statusBadge = `<i class="fa-solid fa-clock-rotate-left"></i> ENDED`;
+        } else {
+            statusBadge = `<i class="fa-solid fa-circle live-dot"></i> LIVE`;
+        }
+
+        let borderStyle = (match.status === 'LIVE' || match.isLive) && match.status !== 'UPCOMING' && match.status !== 'COMPLETED' ? 'border-color: #ef4444; box-shadow: 0 10px 30px rgba(239,68,68,0.15);' : '';
         let winnerPreview = (!match.isLive && sorted.length > 0) ? `<div style="font-size:12px; color:var(--accent); margin-top:8px; font-weight: 700;">🏆 ${sorted[0].name} WON</div>` : '';
 
         let predictUI = '';
@@ -332,8 +333,6 @@ function renderSwipeableMatches() {
                 </div>
 
                 <div id="details-${idx}" style="display:none; margin-top:15px;">
-                    <div style="font-size:12px; color:var(--accent); text-align:right; margin-bottom:10px; font-weight:bold;">${match.status || ''}</div>
-                    
                     <div class="table-responsive">
                         <table class="score-table">
                             <thead>
@@ -363,7 +362,17 @@ function renderInstantOverall() {
     const container = document.getElementById('overallStandingsBlock');
     container.innerHTML = '';
     let aggregatedTeams = {};
-    let tourneyName = "Anchor Series";
+    
+    // FIXED TEAMS MIXUP ISSUE
+    let currentTourney = "Anchor Series";
+    let liveArr = Object.values(globalLiveMatchData);
+    let histArr = Object.values(globalHistoryData).sort((a,b) => b.timestamp - a.timestamp);
+    
+    if (liveArr.length > 0 && liveArr[0].tournamentName) {
+        currentTourney = liveArr[0].tournamentName;
+    } else if (histArr.length > 0 && histArr[0].tournamentName) {
+        currentTourney = histArr[0].tournamentName;
+    }
 
     function accumulate(teamsObj) {
         if(!teamsObj) return;
@@ -379,13 +388,14 @@ function renderInstantOverall() {
     }
 
     Object.values(globalHistoryData).forEach(match => {
-        if(activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) {
-            tourneyName = match.tournamentName; accumulate(match.teams);
+        if((activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) && match.tournamentName === currentTourney) {
+            accumulate(match.teams);
         }
     });
+    
     Object.values(globalLiveMatchData).forEach(match => {
-        if(activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) {
-            tourneyName = match.tournamentName; accumulate(match.teams);
+        if((activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) && match.tournamentName === currentTourney) {
+            accumulate(match.teams);
         }
     });
 
@@ -413,7 +423,7 @@ function renderInstantOverall() {
     container.innerHTML = `
         <div class="custom-card" style="border-color: var(--accent); box-shadow: 0 5px 30px rgba(255, 170, 0, 0.15);">
             <div class="card-header">
-                <div class="tour-name">${tourneyName} <br><span style="font-size:12px; color:var(--accent); margin-top:4px; display:inline-block;">[INSTANT OVERALL LEADERBOARD]</span></div>
+                <div class="tour-name">${currentTourney} <br><span style="font-size:12px; color:var(--accent); margin-top:4px; display:inline-block;">[INSTANT OVERALL LEADERBOARD]</span></div>
                 <div class="game-badge" style="background:linear-gradient(135deg, #ffaa00, #ff5500); color:#000;">${activeGameFilter}</div>
             </div>
             <div class="table-responsive">
@@ -619,19 +629,15 @@ function loginWithGoogle() {
 }
 // ====== JUGAADU TAB FIX (SESSION BOX HIDE/SHOW) ======
 document.addEventListener('click', (e) => {
-    // Session verified wala dabba pakdo
     const sessionBox = document.getElementById('squadLoggedInBlock');
-    if (!sessionBox) return; // Agar dabba nahi mila toh kuch mat karo
+    if (!sessionBox) return; 
     
-    // Jis cheez par click hua hai, uska naam padho
     const clickedText = e.target.innerText || '';
     
-    // Agar "Live Hub", "Squads", ya "Drop Chat" par click kiya hai toh box CHHUPA do
     if (clickedText.includes('Live Hub') || clickedText.includes('Squads') || clickedText.includes('Drop Chat')) {
         sessionBox.style.display = 'none';
     }
     
-    // Agar "Profile" par click kiya hai toh box DIKHA do
     if (clickedText.includes('Profile')) {
         sessionBox.style.display = 'block';
     }
