@@ -170,7 +170,7 @@
                     <button class="secondary-btn flex-1" onclick="processAuthAction('register')">Register</button>
                 </div>
                 
-                <button class="secondary-btn" style="width:100%; margin-top:10px; background:white; color:#000; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px;" onclick="loginWithGoogle()">
+                <button class="secondary-btn" style="width:100%; margin-top:10px; background:white; color:#000; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; border:none;" onclick="loginWithGoogle()">
                     <i class="fa-brands fa-google" style="color:#db4437; font-size:18px;"></i> Sign in with Google
                 </button> 
             </div>
@@ -183,6 +183,40 @@
                 <button class="danger-btn mt-10" onclick="terminateUserSession()">
                     <i class="fa-solid fa-right-from-bracket"></i> Sign Out
                 </button>
+            </div>
+
+            <div class="gamer-id-card mt-15">
+                <div class="profile-header">
+                    <div class="avatar-ring"><i class="fa-solid fa-user-astronaut"></i></div>
+                    <div>
+                        <div style="font-size: 18px; font-weight: 900; color: #e6edf3;">PLAYER_IGN</div>
+                        <span class="level-badge">LVL 88</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-lbl">Wins</div>
+                        <div class="stat-val">234</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">K/D</div>
+                        <div class="stat-val">1.82</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">Rank</div>
+                        <div class="stat-val">#12</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">XP</div>
+                        <div class="stat-val">12.4K</div>
+                    </div>
+                </div>
+
+                <div class="stat-lbl" style="margin-bottom: 8px;">XP Progress</div>
+                <div class="xp-bar-bg">
+                    <div class="xp-bar-fill" style="width: 72%;"></div>
+                </div>
             </div>
 
             <div id="squadLoggedInBlock" style="display:none;">
