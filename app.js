@@ -259,12 +259,12 @@ function renderSwipeableMatches() {
             let customStatusBadge = '';
             if(t.status === 'Booyah_WWCD') {
                 let winLabel = isPUBG ? '🍗 WWCD' : '🏆 BOOYAH';
-                customStatusBadge = `<span style="background:linear-gradient(135deg, #ffaa00, #ff5500); color:#000; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:900; margin-left:8px;">${winLabel}</span>`;
+                customStatusBadge = `<span style="background:linear-gradient(135deg, #ffaa00, #ff5500); color:#000; padding:4px 8px; border-radius:6px; font-size:10px; font-weight:900; margin-left:8px">${winLabel}</span>`;
                 matchRowHighlight = 'background:rgba(255, 170, 0, 0.1); border-left: 3px solid #ffaa00;'; 
             } else if(t.status === 'Qualified') {
-                customStatusBadge = `<span style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 8px; border-radius:6px; font-size:10px; font-weight:900; margin-left:8px;">✅ QUALIFIED</span>`;
+                customStatusBadge = `<span style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 8px; border-radius:6px; font-size:10px; font-weight:bold;">✓ Qualified</span>`;
             } else if(t.status === 'Disqualified') {
-                customStatusBadge = `<span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); padding:4px 8px; border-radius:6px; font-size:10px; font-weight:900; margin-left:8px;">🚫 OUT</span>`;
+                customStatusBadge = `<span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); padding:4px 8px; border-radius:6px; font-size:10px; font-weight:bold;">✗ DQ</span>`;
                 matchRowHighlight = 'opacity:0.6; background:rgba(239, 68, 68, 0.05);'; 
             }
 
@@ -294,22 +294,13 @@ function renderSwipeableMatches() {
             `;
         });
 
-        // FIXED LIVE/UPCOMING BADGE ISSUE
-        let statusBadge = '';
-        if (match.status === 'UPCOMING') {
-            statusBadge = `<i class="fa-solid fa-clock" style="color:var(--accent);"></i> <span style="color:var(--accent);">UPCOMING</span>`;
-        } else if (match.status === 'COMPLETED') {
-            statusBadge = `<i class="fa-solid fa-clock-rotate-left"></i> ENDED`;
-        } else {
-            statusBadge = `<i class="fa-solid fa-circle live-dot"></i> LIVE`;
-        }
-
-        let borderStyle = (match.status === 'LIVE' || match.isLive) && match.status !== 'UPCOMING' && match.status !== 'COMPLETED' ? 'border-color: #ef4444; box-shadow: 0 10px 30px rgba(239,68,68,0.15);' : '';
+        let statusBadge = match.isLive ? `<i class="fa-solid fa-circle live-dot"></i> LIVE` : `<i class="fa-solid fa-clock-rotate-left"></i> ENDED`;
+        let borderStyle = match.isLive ? 'border-color: #ef4444; box-shadow: 0 10px 30px rgba(239,68,68,0.15);' : '';
         let winnerPreview = (!match.isLive && sorted.length > 0) ? `<div style="font-size:12px; color:var(--accent); margin-top:8px; font-weight: 700;">🏆 ${sorted[0].name} WON</div>` : '';
 
         let predictUI = '';
         if(match.status === "UPCOMING") {
-            predictUI = `<button class="primary-btn mt-15" style="width:100%; background:linear-gradient(135deg, #10b981, #059669);" onclick="submitPrediction('${match.matchLabel}')"><i class="fa-solid fa-crosshairs"></i> Predict Booyah & Win!</button>`;
+            predictUI = `<button class="primary-btn mt-15" style="width:100%; background:linear-gradient(135deg, #10b981, #059669);" onclick="submitPrediction('${match.matchLabel}')"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict Winner</button>`;
         }
 
         container.innerHTML += `
@@ -336,7 +327,7 @@ function renderSwipeableMatches() {
                     <div class="table-responsive">
                         <table class="score-table">
                             <thead>
-                                <tr><th style="width:10%; text-align:center;">#</th><th>Team Label</th><th style="text-align:center;">Kills</th><th style="text-align:center;">${labelWWCD}</th><th style="text-align:center;">Total</th></tr>
+                                <tr><th style="width:10%; text-align:center;">#</th><th>Team Label</th><th style="text-align:center;">Kills</th><th style="text-align:center;">${labelWWCD}</th><th style="text-align:center;">Total Pts</th></tr>
                             </thead>
                             <tbody>${matchBlocksHTML}</tbody>
                         </table>
@@ -362,17 +353,7 @@ function renderInstantOverall() {
     const container = document.getElementById('overallStandingsBlock');
     container.innerHTML = '';
     let aggregatedTeams = {};
-    
-    // FIXED TEAMS MIXUP ISSUE
-    let currentTourney = "Anchor Series";
-    let liveArr = Object.values(globalLiveMatchData);
-    let histArr = Object.values(globalHistoryData).sort((a,b) => b.timestamp - a.timestamp);
-    
-    if (liveArr.length > 0 && liveArr[0].tournamentName) {
-        currentTourney = liveArr[0].tournamentName;
-    } else if (histArr.length > 0 && histArr[0].tournamentName) {
-        currentTourney = histArr[0].tournamentName;
-    }
+    let tourneyName = "Anchor Series";
 
     function accumulate(teamsObj) {
         if(!teamsObj) return;
@@ -388,14 +369,13 @@ function renderInstantOverall() {
     }
 
     Object.values(globalHistoryData).forEach(match => {
-        if((activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) && match.tournamentName === currentTourney) {
-            accumulate(match.teams);
+        if(activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) {
+            tourneyName = match.tournamentName; accumulate(match.teams);
         }
     });
-    
     Object.values(globalLiveMatchData).forEach(match => {
-        if((activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) && match.tournamentName === currentTourney) {
-            accumulate(match.teams);
+        if(activeGameFilter === 'ALL' || (match.gameName && match.gameName.includes(activeGameFilter))) {
+            tourneyName = match.tournamentName; accumulate(match.teams);
         }
     });
 
@@ -423,13 +403,13 @@ function renderInstantOverall() {
     container.innerHTML = `
         <div class="custom-card" style="border-color: var(--accent); box-shadow: 0 5px 30px rgba(255, 170, 0, 0.15);">
             <div class="card-header">
-                <div class="tour-name">${currentTourney} <br><span style="font-size:12px; color:var(--accent); margin-top:4px; display:inline-block;">[INSTANT OVERALL LEADERBOARD]</span></div>
+                <div class="tour-name">${tourneyName} <br><span style="font-size:12px; color:var(--accent); margin-top:4px; display:inline-block;">[INSTANT OVERALL LEADERBOARD]</span></div>
                 <div class="game-badge" style="background:linear-gradient(135deg, #ffaa00, #ff5500); color:#000;">${activeGameFilter}</div>
             </div>
             <div class="table-responsive">
                 <table class="score-table">
                     <thead>
-                        <tr><th style="width:10%; text-align:center;">Rank</th><th>Team</th><th style="text-align:center;">Total Kills</th><th style="text-align:center;">Total Place</th><th style="text-align:center;">Grand Total</th></tr>
+                        <tr><th style="width:10%; text-align:center;">Rank</th><th>Team</th><th style="text-align:center;">Total Kills</th><th style="text-align:center;">Total Place</th><th style="text-align:center;">Total Points</th></tr>
                     </thead>
                     <tbody>${rowHTML}</tbody>
                 </table>
@@ -558,23 +538,96 @@ database.ref('squads').on('value', s => {
 });
 
 // ==========================================
-// 9. LOBBY CHAT
+// 9. LOBBY CHAT (PREMIUM & STICKERS)
 // ==========================================
+function addEmoji(emoji) {
+    const input = document.getElementById('chatMsgInput');
+    input.value += emoji + " ";
+    input.focus();
+}
+
+// Toggle and Load Stickers from User's Inventory
+function toggleStickerTray() {
+    const tray = document.getElementById('myStickersTray');
+    tray.style.display = tray.style.display === 'block' ? 'none' : 'block';
+    if(tray.style.display === 'block') loadMyStickers();
+}
+
+function loadMyStickers() {
+    const list = document.getElementById('ownedStickersList');
+    if(!currentUser) {
+        list.innerHTML = '<span style="font-size:12px; color:var(--danger);">Login to access your stickers!</span>';
+        return;
+    }
+    
+    database.ref(`users/${currentUser.uid}/inventory`).once('value', invSnap => {
+        if(!invSnap.exists()) {
+            list.innerHTML = '<span style="font-size:12px; color:#8b9bb4;">No stickers owned. Buy from Armory!</span>';
+            return;
+        }
+        
+        list.innerHTML = '';
+        invSnap.forEach(item => {
+            database.ref(`shop_items/${item.key}`).once('value', shopSnap => {
+                if(shopSnap.exists() && shopSnap.val().type === 'emoji') { 
+                    let url = shopSnap.val().imageUrl;
+                    list.innerHTML += `<img src="${url}" style="width:60px; height:60px; object-fit:contain; cursor:pointer; background:rgba(255,255,255,0.05); border-radius:8px; padding:5px; transition:0.2s;" onmouseover="this.style.background='rgba(0,212,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" onclick="sendStickerToChat('${url}')">`;
+                }
+            });
+        });
+    });
+}
+
+// Send standard text
 function sendLobbyChatMessage() {
     const input = document.getElementById('chatMsgInput');
     if(!input.value.trim()) return;
     let username = currentUser ? currentUser.email.split('@')[0] : "Guest_Operator";
-    database.ref('lobby_chat').push().set({ user: username, text: input.value.trim() });
+    database.ref('lobby_chat').push().set({ user: username, type: 'text', content: input.value.trim(), time: Date.now() });
     input.value = '';
 }
 
-database.ref('lobby_chat').limitToLast(30).on('value', s => {
-    const box = document.getElementById('chatBox'); box.innerHTML = '';
+// Send sticker directly to database
+function sendStickerToChat(imgUrl) {
+    let username = currentUser ? currentUser.email.split('@')[0] : "Guest_Operator";
+    database.ref('lobby_chat').push().set({ user: username, type: 'sticker', content: imgUrl, time: Date.now() });
+    toggleStickerTray();
+}
+
+// Live Chat Renderer (Auto-Scroll & Dual Formatting)
+database.ref('lobby_chat').limitToLast(40).on('value', s => {
+    const box = document.getElementById('chatBox'); 
+    box.innerHTML = '';
+    
     s.forEach(c => {
         const m = c.val();
-        box.innerHTML += `<div class="msg"><div class="user"><i class="fa-solid fa-bolt"></i> ${m.user}</div><div class="text">${m.text}</div></div>`;
+        let isMe = currentUser && m.user === currentUser.email.split('@')[0];
+        let align = isMe ? 'flex-end' : 'flex-start';
+        let bg = isMe ? 'linear-gradient(135deg, #00d4ff, #007bb5)' : 'rgba(255,255,255,0.05)';
+        let color = isMe ? '#000' : '#e6edf3';
+        let radius = isMe ? '15px 15px 0px 15px' : '15px 15px 15px 0px';
+        
+        let contentHTML = '';
+        if(m.type === 'sticker') {
+            contentHTML = `<img src="${m.content}" class="chat-sticker-img">`;
+            bg = 'transparent';
+        } else {
+            contentHTML = m.content; 
+        }
+
+        box.innerHTML += `
+            <div class="chat-msg-row" style="display:flex; flex-direction:column; align-items:${align}; width:100%;">
+                <span style="font-size:10px; color:#8b9bb4; margin-bottom:4px; font-weight:800;"><i class="fa-solid fa-bolt" style="color:#ffaa00;"></i> ${m.user}</span>
+                <div style="background:${bg}; color:${color}; padding:${m.type==='sticker'?'0':'12px 16px'}; border-radius:${radius}; font-size:13px; max-width:85%; word-break: break-word;">
+                    ${contentHTML}
+                </div>
+            </div>
+        `;
     });
-    box.scrollTop = box.scrollHeight;
+    
+    setTimeout(() => {
+        box.scrollTop = box.scrollHeight;
+    }, 50);
 });
 
 // ==========================================
@@ -617,6 +670,7 @@ function buyItem(itemId, price, itemName) {
 window.onload = () => { 
     attachDataListeners(); 
 };
+
 function loginWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
@@ -627,7 +681,7 @@ function loginWithGoogle() {
             alert("Google Login Failed: " + error.message);
         });
 }
-// ====== JUGAADU TAB FIX (SESSION BOX HIDE/SHOW) ======
+
 document.addEventListener('click', (e) => {
     const sessionBox = document.getElementById('squadLoggedInBlock');
     if (!sessionBox) return; 
