@@ -159,32 +159,49 @@
         </div>
 
         <div id="auth-view" class="page-view">
-            <div class="section-heading"><i class="fa-solid fa-id-card"></i> Player Portal</div>
-
-            <div class="custom-card form-group" id="authFormBlock">
-                <input type="email" id="authEmail" placeholder="Registered Email Address">
-                <input type="password" id="authPass" placeholder="Secure Password">
-                <div class="btn-group">
-                    <button class="primary-btn flex-1" onclick="processAuthAction('login')">Sign In</button>
-                    <button class="secondary-btn flex-1" onclick="processAuthAction('register')">Register</button>
+            <!-- AUTH FORM BLOCK (Login/Register/Google) - PRISTINE COPY FROM USER -->
+            <div id="authFormBlock" style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:350px; margin: 20px auto; padding: 25px; background: linear-gradient(135deg, rgba(18,25,43,0.9), rgba(5,9,20,0.95)); border: 1px solid var(--primary-cyan); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,212,255,0.15);">
+                
+                <h2 style="color: #fff; margin-bottom: 25px; font-weight: 900; letter-spacing: 1px;"><i class="fa-solid fa-user-astronaut"></i> PLAYER AUTH</h2>
+                
+                <input type="email" id="authEmail" placeholder="Enter Email Address" style="width:100%; padding: 12px 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; outline: none;">
+                
+                <input type="password" id="authPass" placeholder="Enter Password" style="width:100%; padding: 12px 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; outline: none;">
+                
+                <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 20px;">
+                    <button style="flex: 1; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 13px; background: linear-gradient(135deg, #00d4ff, #007bb5); color: #000; border: none; cursor: pointer;" onclick="processAuthAction('login')">LOGIN</button>
+                    
+                    <button style="flex: 1; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 13px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff; border: none; cursor: pointer;" onclick="processAuthAction('register')">REGISTER</button>
                 </div>
-
-                <button class="secondary-btn" style="width:100%; margin-top:10px; background:white; color:#000; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px;" onclick="loginWithGoogle()">
-                    <i class="fa-brands fa-google" style="color:#db4437; font-size:18px;"></i> Sign in with Google
+                
+                <div style="width: 100%; text-align: center; margin-bottom: 20px; color: #8b9bb4; font-size: 12px; font-weight: bold; position: relative;">
+                    <span style="background: #0d1323; padding: 0 10px; position: relative; z-index: 1;">OR CONNECT WITH</span>
+                    <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 0;"></div>
+                </div>
+                
+                <button style="width:100%; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 14px; background: #fff; color: #000; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(255,255,255,0.1); transition: 0.2s;" onclick="loginWithGoogle()" onmouseover="this.style.transform='scale(0.98)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width: 18px; height: 18px;">
+                    SIGN IN WITH GOOGLE
                 </button>
             </div>
-
-            <div id="authWelcomeBlock" style="display:none;" class="custom-card form-group">
-                <h3 id="welcomeUserText" class="success-text">Session Verified!</h3>
-                <label class="input-label">Set Favorite Tracking Clan:</label>
-                <input type="text" id="userFavTeamInput" placeholder="Exact Squad Name">
-                <button class="primary-btn" onclick="commitFavPreference()" id="saveRuleBtn">Save Rule</button>
-                <button class="danger-btn mt-10" onclick="terminateUserSession()">
+            
+            <!-- AUTH WELCOME BLOCK (After Login) -->
+            <div id="authWelcomeBlock" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:350px; margin: 20px auto; padding: 25px; background: linear-gradient(135deg, rgba(18,25,43,0.9), rgba(5,9,20,0.95)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 15px; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);">
+                
+                <h3 style="color: #10b981; margin-bottom: 20px; font-weight: 900; font-size: 16px;"><i class="fa-solid fa-circle-check"></i> Session Verified!</h3>
+                
+                <label style="color: #8b9bb4; font-size: 12px; font-weight: bold; margin-bottom: 10px; width: 100%;">Set Favorite Tracking Clan:</label>
+                <input type="text" id="userFavTeamInput" placeholder="Exact Squad Name" style="width:100%; padding: 12px 15px; margin-bottom: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.6); color: #fff; font-size: 14px; outline: none;">
+                
+                <button style="width:100%; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 13px; background: linear-gradient(135deg, #00d4ff, #007bb5); color: #000; border: none; cursor: pointer; margin-bottom: 10px;" onclick="commitFavPreference()">Save Rule</button>
+                
+                <button style="width:100%; padding: 12px; border-radius: 8px; font-weight: 900; font-size: 13px; background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; cursor: pointer;" onclick="terminateUserSession()">
                     <i class="fa-solid fa-right-from-bracket"></i> Sign Out
                 </button>
             </div>
 
-            <div class="gamer-id-card mt-15" aria-label="Player statistics card">
+            <!-- GAMER ID CARD (Stats Display) -->
+            <div class="gamer-id-card" style="margin-top: 20px;">
                 <div class="profile-header">
                     <div class="avatar-ring"><i class="fa-solid fa-user-astronaut"></i></div>
                     <div>
@@ -228,6 +245,5 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="app.js"></script>
-    <script src="player-card.js"></script>
 </body>
 </html>
