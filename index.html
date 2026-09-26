@@ -6,232 +6,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Esports Anchor - Elite Player Station</title>
-    
-    <!-- Fonts aur Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Dhyan rakhna teri CSS file ka naam exact "Style2.css" hona chahiye tere folder me -->
     <link rel="stylesheet" href="style2.css">
 </head>
-
 <body>
-
-    <!-- 1. Top Brand Header -->
     <header class="header">
-        <div class="brand-title">
-            <img src="https://i.ibb.co/4RnxSDYS/IMG-20260915-181523.png" alt="Logo" class="site-logo">
-            ANCHOR <span>ARENA</span>
-        </div>
-
+        <div class="brand-title"><img src="https://i.ibb.co/4RnxSDYS/IMG-20260915-181523.png" alt="Logo" class="site-logo">ANCHOR <span>ARENA</span></div>
         <div class="header-actions">
-            <button class="icon-btn theme-toggle" onclick="toggleAppTheme()" aria-label="Toggle Theme">
-                <i class="fa-solid fa-moon" id="themeIcon"></i>
-            </button>
+            <button class="icon-btn theme-toggle" onclick="toggleAppTheme()" aria-label="Toggle Theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
             <div id="userProfileArea" class="user-profile-badge"></div>
         </div>
     </header>
-
-    <!-- 2. Compact Top Navigation Bar -->
-    <nav class="top-nav-bar">
-        <div class="nav-scroll-container">
-            <button class="nav-tab active" onclick="switchPortalView('live-view', this)">
-                <i class="fa-solid fa-satellite-dish"></i> Live Hub
-            </button>
-            <button class="nav-tab" onclick="switchPortalView('squad-view', this)">
-                <i class="fa-solid fa-users-viewfinder"></i> Squads
-            </button>
-            <button class="nav-tab" onclick="switchPortalView('chat-view', this)">
-                <i class="fa-solid fa-comments"></i> Drop Chat
-            </button>
-            <button class="nav-tab" onclick="switchPortalView('store-view', this)">
-                <i class="fa-solid fa-store"></i> Armory
-            </button>
-            <button class="nav-tab" onclick="switchPortalView('inbox-view', this)">
-                <i class="fa-solid fa-envelope"></i> Inbox <span id="navMailCount" class="notification-dot" style="display:none;">0</span>
-            </button>
-            <button class="nav-tab" onclick="switchPortalView('auth-view', this)" id="authMenuLink">
-                <i class="fa-solid fa-user-lock"></i> Login
-            </button>
-        </div>
-    </nav>
-
-    <!-- Bulletin Announcement -->
+    <nav class="top-nav-bar"><div class="nav-scroll-container">
+        <button class="nav-tab active" onclick="switchPortalView('live-view', this)"><i class="fa-solid fa-satellite-dish"></i> Live Hub</button>
+        <button class="nav-tab" onclick="switchPortalView('squad-view', this)"><i class="fa-solid fa-users-viewfinder"></i> Squads</button>
+        <button class="nav-tab" onclick="switchPortalView('chat-view', this)"><i class="fa-solid fa-comments"></i> Drop Chat</button>
+        <button class="nav-tab" onclick="switchPortalView('store-view', this)"><i class="fa-solid fa-store"></i> Armory</button>
+        <button class="nav-tab" onclick="switchPortalView('inbox-view', this)"><i class="fa-solid fa-envelope"></i> Inbox <span id="navMailCount" class="notification-dot" style="display:none;">0</span></button>
+        <button class="nav-tab" onclick="switchPortalView('auth-view', this)" id="authMenuLink"><i class="fa-solid fa-user-lock"></i> Login</button>
+    </div></nav>
     <div class="ticker-wrap" id="broadcastTicker"></div>
-
-    <!-- 3. Main Content Area -->
     <main class="content">
-        
-        <!-- ================= LIVE HUB VIEW ================= -->
         <div id="live-view" class="page-view active">
-            <div class="game-filter">
-                <button class="game-btn active" onclick="setGameFilter('ALL', this)">All Games</button>
-                <button class="game-btn" onclick="setGameFilter('BGMI', this)">PUBG/BGMI</button>
-                <button class="game-btn" onclick="setGameFilter('FREE FIRE', this)">Free Fire</button>
-            </div>
-
-            <div class="tab-btn-container">
-                <button class="tab-btn active" id="btnActiveTab" onclick="toggleLeaderboardTab('matches')">Match Cards</button>
-                <button class="tab-btn" id="btnOverallTab" onclick="toggleLeaderboardTab('overall')">Instant Overall</button>
-            </div>
-            
-            <div id="matchesContainerView">
-                <div class="matches-horizontal-slider" id="tournamentsList"></div>
-            </div>
-
-            <div id="overallContainerView" style="display:none;">
-                <div id="overallStandingsBlock"></div>
-            </div>
+            <div class="game-filter"><button class="game-btn active" onclick="setGameFilter('ALL', this)">All Games</button><button class="game-btn" onclick="setGameFilter('BGMI', this)">PUBG/BGMI</button><button class="game-btn" onclick="setGameFilter('FREE FIRE', this)">Free Fire</button></div>
+            <div class="tab-btn-container"><button class="tab-btn active" id="btnActiveTab" onclick="toggleLeaderboardTab('matches')">Match Cards</button><button class="tab-btn" id="btnOverallTab" onclick="toggleLeaderboardTab('overall')">Instant Overall</button></div>
+            <div id="matchesContainerView"><div class="matches-horizontal-slider" id="tournamentsList"></div></div>
+            <div id="overallContainerView" style="display:none;"><div id="overallStandingsBlock"></div></div>
         </div>
-
-        <!-- ================= STORE VIEW ================= -->
-        <div id="store-view" class="page-view">
-            <div class="section-heading"><i class="fa-solid fa-gem"></i> Elite Armory</div>
-            <p class="section-desc">Grab Free avatars or flex with Premium Glowing Assets.</p>
-            <div class="store-grid" id="storeItemsContainer">
-                <p class="loading-text">Store is syncing...</p>
-            </div>
-        </div>
-
-        <!-- ================= INBOX VIEW ================= -->
-        <div id="inbox-view" class="page-view">
-            <div class="section-heading"><i class="fa-solid fa-gift"></i> System Inbox</div>
-            <p class="section-desc">Your UID: <span id="displayPlayerUid" class="highlight-uid">Login required</span></p>
-            <div id="mailboxContainer">
-                <div class="custom-card center-text">Log in to view your private rewards inbox.</div>
-            </div>
-        </div>
-
-        <!-- ================= SQUAD VIEW ================= -->
+        <div id="store-view" class="page-view"><div class="section-heading"><i class="fa-solid fa-gem"></i> Elite Armory</div><p class="section-desc">Grab Free avatars or flex with Premium Glowing Assets.</p><div class="store-grid" id="storeItemsContainer"><p class="loading-text">Store is syncing...</p></div></div>
+        <div id="inbox-view" class="page-view"><div class="section-heading"><i class="fa-solid fa-gift"></i> System Inbox</div><p class="section-desc">Your UID: <span id="displayPlayerUid" class="highlight-uid">Login required</span></p><div id="mailboxContainer"><div class="custom-card center-text">Log in to view your private rewards inbox.</div></div></div>
         <div id="squad-view" class="page-view">
-            <!-- Logged Out State -->
-            <div id="squadLoggedOutMsg" class="custom-card center-text">
-                <p>Please log in using verified profile credentials to setup custom squads.</p>
-                <button class="primary-btn" onclick="switchPortalView('auth-view', document.getElementById('authMenuLink'))">Go to Login</button>
-            </div>
-
-            <div class="custom-card inline-form">
-                <input type="text" id="searchSquadUid" placeholder="Enter Team UID (e.g. SQ-1234)">
-                <button class="primary-btn" onclick="dispatchClanJoinRequest()">Request</button>
-            </div>
-
-            <div id="createSquadConsole">
-                <div class="section-heading"><i class="fa-solid fa-shield-halved"></i> Create Roster</div>
-                <div class="custom-card form-group">
-                    <input type="text" id="sqName" placeholder="Squad Name (e.g. Team Soul)">
-                    <input type="text" id="sqP2" placeholder="Player 2 Handle">
-                    <input type="text" id="sqP3" placeholder="Player 3 Handle">
-                    <input type="text" id="sqP4" placeholder="Player 4 Handle">
-                    <button class="primary-btn" onclick="publishNewSquadLineup()">Register Group</button>
-                </div>
-            </div>
-
-            <div id="leaderSquadConsole" style="display:none;" class="custom-card">
-                <h3 class="clan-title">My Clan: <span id="myClanTitle"></span></h3>
-                <p class="clan-uid">Search UID: <span id="myClanUid" class="badge badge-cyan"></span></p>
-                <div id="myClanLineupText" class="clan-roster-text"></div>
-                
-                <div class="incoming-req-section">
-                    <label>Incoming Applications (Max 5):</label>
-                    <div id="incomingReqList"></div>
-                </div>
-            </div>
-
-            <!-- Public Squads -->
-            <div class="mt-30">
-                <div class="section-heading"><i class="fa-solid fa-globe"></i> Verified Teams</div>
-                <div id="publicSquadsContainer" class="mt-15"></div>
-            </div>
+            <div id="squadLoggedOutMsg" class="custom-card center-text"><p>Please log in using verified profile credentials to setup custom squads.</p><button class="primary-btn" onclick="switchPortalView('auth-view', document.getElementById('authMenuLink'))">Go to Login</button></div>
+            <div class="custom-card inline-form"><input type="text" id="searchSquadUid" placeholder="Enter Team UID (e.g. SQ-1234)"><button class="primary-btn" onclick="dispatchClanJoinRequest()">Request</button></div>
+            <div id="createSquadConsole"><div class="section-heading"><i class="fa-solid fa-shield-halved"></i> Create Roster</div><div class="custom-card form-group"><input type="text" id="sqName" placeholder="Squad Name (e.g. Team Soul)"><input type="text" id="sqP2" placeholder="Player 2 Handle"><input type="text" id="sqP3" placeholder="Player 3 Handle"><input type="text" id="sqP4" placeholder="Player 4 Handle"><button class="primary-btn" onclick="publishNewSquadLineup()">Register Group</button></div></div>
+            <div id="leaderSquadConsole" style="display:none;" class="custom-card"><h3 class="clan-title">My Clan: <span id="myClanTitle"></span></h3><p class="clan-uid">Search UID: <span id="myClanUid" class="badge badge-cyan"></span></p><div id="myClanLineupText" class="clan-roster-text"></div><div class="incoming-req-section"><label>Incoming Applications (Max 5):</label><div id="incomingReqList"></div></div></div>
+            <div class="mt-30"><div class="section-heading"><i class="fa-solid fa-globe"></i> Verified Teams</div><div id="publicSquadsContainer" class="mt-15"></div></div>
         </div>
-
-        <!-- ================= CHAT VIEW ================= -->
-        <div id="chat-view" class="page-view">
-            <div class="section-heading"><i class="fa-solid fa-headset"></i> Global Lobby Chat</div>
-            <div class="chat-container">
-                <div class="chat-messages" id="chatBox"></div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatMsgInput" placeholder="Type a message...">
-                    <button class="chat-submit-btn" onclick="sendLobbyChatMessage()">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= AUTH VIEW ================= -->
+        <div id="chat-view" class="page-view"><div class="section-heading"><i class="fa-solid fa-headset"></i> Global Lobby Chat</div><div class="chat-container"><div class="chat-messages" id="chatBox"></div><div class="chat-input-area"><input type="text" id="chatMsgInput" placeholder="Type a message..."><button class="chat-submit-btn" onclick="sendLobbyChatMessage()"><i class="fa-solid fa-paper-plane"></i></button></div></div></div>
         <div id="auth-view" class="page-view">
             <div class="section-heading"><i class="fa-solid fa-id-card"></i> Player Portal</div>
-            
-            <div class="custom-card form-group" id="authFormBlock">
-                <input type="email" id="authEmail" placeholder="Registered Email Address">
-                <input type="password" id="authPass" placeholder="Secure Password">
-                <div class="btn-group">
-                    <button class="primary-btn flex-1" onclick="processAuthAction('login')">Sign In</button>
-                    <button class="secondary-btn flex-1" onclick="processAuthAction('register')">Register</button>
-                </div>
-                
-                <button class="secondary-btn" style="width:100%; margin-top:10px; background:white; color:#000; font-weight:800; display:flex; align-items:center; justify-content:center; gap:10px; border:none;" onclick="loginWithGoogle()">
-                    <i class="fa-brands fa-google" style="color:#db4437; font-size:18px;"></i> Sign in with Google
-                </button> 
-            </div>
-            
-            <div id="authWelcomeBlock" style="display:none;" class="custom-card form-group">
-                <h3 id="welcomeUserText" class="success-text">Session Verified!</h3>
-                <label class="input-label">Set Favorite Tracking Clan:</label>
-                <input type="text" id="userFavTeamInput" placeholder="Exact Squad Name">
-                <button class="primary-btn" onclick="commitFavPreference()" id="saveRuleBtn">Save Rule</button>
-                <button class="danger-btn mt-10" onclick="terminateUserSession()">
-                    <i class="fa-solid fa-right-from-bracket"></i> Sign Out
-                </button>
-            </div>
-
-            <div class="gamer-id-card mt-15">
-                <div class="profile-header">
-                    <div class="avatar-ring"><i class="fa-solid fa-user-astronaut"></i></div>
-                    <div>
-                        <div style="font-size: 18px; font-weight: 900; color: #e6edf3;">PLAYER_IGN</div>
-                        <span class="level-badge">LVL 88</span>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-lbl">Wins</div>
-                        <div class="stat-val">234</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-lbl">K/D</div>
-                        <div class="stat-val">1.82</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-lbl">Rank</div>
-                        <div class="stat-val">#12</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-lbl">XP</div>
-                        <div class="stat-val">12.4K</div>
-                    </div>
-                </div>
-
-                <div class="stat-lbl" style="margin-bottom: 8px;">XP Progress</div>
-                <div class="xp-bar-bg">
-                    <div class="xp-bar-fill" style="width: 72%;"></div>
-                </div>
-            </div>
-
-            <div id="squadLoggedInBlock" style="display:none;">
-                <div class="section-heading"><i class="fa-solid fa-magnifying-glass"></i> Join Clan</div>
-            </div>
+            <div class="custom-card form-group" id="authFormBlock"><input type="email" id="authEmail" placeholder="Registered Email Address"><input type="password" id="authPass" placeholder="Secure Password"><div class="btn-group"><button class="primary-btn flex-1" onclick="processAuthAction('login')">Sign In</button><button class="secondary-btn flex-1" onclick="processAuthAction('register')">Register</button></div><button class="secondary-btn" style="width:100%;margin-top:10px;background:white;color:#000;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;" onclick="loginWithGoogle()"><i class="fa-brands fa-google" style="color:#db4437;font-size:18px;"></i> Sign in with Google</button></div>
+            <div id="authWelcomeBlock" style="display:none;" class="custom-card form-group"><h3 id="welcomeUserText" class="success-text">Session Verified!</h3><label class="input-label">Set Favorite Tracking Clan:</label><input type="text" id="userFavTeamInput" placeholder="Exact Squad Name"><button class="primary-btn" onclick="commitFavPreference()" id="saveRuleBtn">Save Rule</button><button class="danger-btn mt-10" onclick="terminateUserSession()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button></div>
+            <div class="gamer-id-card mt-15" aria-label="Player statistics card"><div class="profile-header"><div class="avatar-ring"><i class="fa-solid fa-user-astronaut"></i></div><div><div class="player-name" style="font-size:18px;font-weight:900;color:#e6edf3;">GUEST PLAYER</div><span class="level-badge">LVL 1</span></div></div><div class="stats-grid"><div class="stat-box"><div class="stat-lbl">Wins</div><div class="stat-val wins-value">0</div></div><div class="stat-box"><div class="stat-lbl">K/D</div><div class="stat-val kd-value">0.00</div></div><div class="stat-box"><div class="stat-lbl">Rank</div><div class="stat-val rank-value">--</div></div><div class="stat-box"><div class="stat-lbl">XP</div><div class="stat-val xp-value">0</div></div></div><div class="stat-lbl" style="margin-bottom:8px;">XP Progress</div><div class="xp-bar-bg"><div class="xp-bar-fill" style="width:0%;" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div></div>
+            <div id="squadLoggedInBlock" style="display:none;"><div class="section-heading"><i class="fa-solid fa-magnifying-glass"></i> Join Clan</div></div>
         </div>
-
     </main>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-
-    <!-- Dhyan rakhna teri JS file ka naam exact "app.js" hona chahiye tere folder me -->
-    <script src="app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script><script src="app.js"></script><script src="player-card.js"></script>
 </body>
 </html>
