@@ -1,20 +1,20 @@
 /* =========================================================
-   1. ROOT VARIABLES (THEME & COLORS)
-   ========================================================= */
+    1. ROOT VARIABLES (THEME & COLORS)
+    ========================================================= */
 :root {
-    --bg-color: #0b0f19;
-    --card-bg: rgba(17, 24, 39, 0.65);
-    --header-bg: rgba(11, 15, 25, 0.85);
-    --primary: #00ffff; 
-    --primary-cyan: #00d4ff;
-    --accent: #ffaa00;  
-    --text-main: #f8fafc;
-    --text-sub: #94a3b8;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --neon-glow: 0 0 15px rgba(0, 255, 255, 0.4);
-    --glass-blur: blur(12px) saturate(150%);
-    --font-main: 'Poppins', sans-serif;
-    --bg-glow: #1e293b; /* Dark mode ka background glow */
+     --bg-color: #0b0f19;
+     --card-bg: rgba(17, 24, 39, 0.65);
+     --header-bg: rgba(11, 15, 25, 0.85);
+     --primary: #00ffff; 
+     --primary-cyan: #00d4ff;
+     --accent: #ffaa00;  
+     --text-main: #f8fafc;
+     --text-sub: #94a3b8;
+     --border-color: rgba(255, 255, 255, 0.1);
+     --neon-glow: 0 0 15px rgba(0, 255, 255, 0.4);
+     --glass-blur: blur(12px) saturate(150%);
+     --font-main: 'Poppins', sans-serif;
+     --bg-glow: #1e293b; /* Dark mode ka background glow */
 }
 
 [data-theme="light"] {
@@ -32,12 +32,17 @@
 }
 
 /* =========================================================
-   2. BASE STYLES & RESET
-   ========================================================= */
+    2. BASE STYLES & RESET
+    ========================================================= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body { 
     background-color: var(--bg-color); 
+    background-image: url('logo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--text-main); 
     font-family: var(--font-main); 
     padding-top: 140px; 
@@ -48,11 +53,16 @@ body {
 
 
 /* =========================================================
-   2. BASE STYLES & RESET
-   ========================================================= */
+    2. BASE STYLES & RESET
+    ========================================================= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
     background-color: var(--bg-color);
+    background-image: url('logo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--text-main);
     font-family: var(--font-main);
     padding-top: 140px; /* Space for Header + Nav */
@@ -69,8 +79,8 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 /* =========================================================
-   3. HEADER & TOP NAVIGATION (NEW COMPACT DESIGN)
-   ========================================================= */
+    3. HEADER & TOP NAVIGATION (NEW COMPACT DESIGN)
+    ========================================================= */
 .header {
     position: fixed; top: 0; left: 0; right: 0; height: 70px;
     background: var(--header-bg); 
@@ -115,8 +125,8 @@ body {
 .nav-tab.active { background: rgba(0, 255, 255, 0.1); color: var(--primary); border: 1px solid rgba(0,255,255,0.3); }
 
 /* =========================================================
-   4. CONTENT & LAYOUT UTILITIES
-   ========================================================= */
+    4. CONTENT & LAYOUT UTILITIES
+    ========================================================= */
 .content { max-width: 800px; margin: 0 auto; padding: 15px; }
 .page-view { display: none; animation: fadeIn 0.4s ease forwards; }
 .page-view.active { display: block; }
@@ -131,8 +141,8 @@ body {
 .flex-1 { flex: 1; }
 
 /* =========================================================
-   5. BUTTONS & FORMS
-   ========================================================= */
+    5. BUTTONS & FORMS
+    ========================================================= */
 .primary-btn, .secondary-btn, .danger-btn {
     padding: 14px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; 
     font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; font-family: var(--font-main);
@@ -159,8 +169,8 @@ input {
 input:focus { border-color: var(--primary); box-shadow: inset 0 0 8px rgba(0,255,255,0.2); }
 
 /* =========================================================
-   6. HORIZONTAL MATCH SLIDER (THE NEW LAYOUT)
-   ========================================================= */
+    6. HORIZONTAL MATCH SLIDER (THE NEW LAYOUT)
+    ========================================================= */
 .matches-horizontal-slider {
     display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px;
     scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
@@ -178,8 +188,8 @@ input:focus { border-color: var(--primary); box-shadow: inset 0 0 8px rgba(0,255
 .match-card:hover { border-color: rgba(255,255,255,0.3); }
 
 /* =========================================================
-   7. GAME FILTERS & TABS
-   ========================================================= */
+    7. GAME FILTERS & TABS
+    ========================================================= */
 .game-filter { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
 .game-btn { 
     padding: 8px 16px; border-radius: 30px; border: 1px solid var(--border-color); 
@@ -192,8 +202,8 @@ input:focus { border-color: var(--primary); box-shadow: inset 0 0 8px rgba(0,255
 .tab-btn.active { background: var(--primary); color: #000; box-shadow: var(--neon-glow); }
 
 /* =========================================================
-   8. CHAT & STORE & UTILS
-   ========================================================= */
+    8. CHAT & STORE & UTILS
+    ========================================================= */
 .chat-container { 
     background: var(--card-bg); border: 1px solid var(--border-color); 
     border-radius: 16px; height: 60vh; display: flex; flex-direction: column; overflow: hidden; 
